@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { WebSocketServer } from "ws";
+import { Server } from "socket.io";
 
 const app = express();
 const PORT = 8000;
@@ -23,17 +23,17 @@ const server = app.listen(PORT, async () => {
 });
 
 
-const wsServer = new WebSocketServer({ server });
+// const wsServer = new WebSocketServer({ server });
 
-wsServer.on("connection", (ws) => {
-    console.log("New WebSocket connection established");
+// wsServer.on("connection", (ws) => {
+//     console.log("New WebSocket connection established");
 
-    ws.on("message", (message) => {
-        console.log(`Received message: ${message}`);
-        ws.send(`Server received: ${message}`);
-    });
+//     ws.on("message", (message) => {
+//         console.log(`Received message: ${message}`);
+//         ws.send(`Server received: ${message}`);
+//     });
 
-    ws.on("close", () => {
-        console.log("WebSocket connection closed");
-    });
-});
+//     ws.on("close", () => {
+//         console.log("WebSocket connection closed");
+//     });
+// });
