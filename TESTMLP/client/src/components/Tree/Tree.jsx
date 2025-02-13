@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import TaskPopup from '../TaskModal/TaskModal';
 
 
 const TaskItem = ({ task }) => {
@@ -48,7 +49,8 @@ const Folder = ({ item, onAddTask }) => {
 
 const Data = () => {
     const [data, setData] = useState([]);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFolder, setSelectedFolder] = useState(null); 
     const fetchData = async () => {
         try {
             const response = await axios.get(
@@ -65,11 +67,14 @@ const Data = () => {
     }, []);
 
     const addTask = (folder) => {
-        const newTask = { title: "New Task", description: "New task description", subtasks: [] };
-        const updatedData = data.map(item =>
-            item.date === folder.date ? { ...item, tasks: [...item.tasks, newTask] } : item
-        );
-        setData(updatedData);
+       
+        setSelectedFolder(folder);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedFolder(null);
     };
 
     return (
@@ -82,6 +87,14 @@ const Data = () => {
                 </div>
             ) : (
                 <div className="no-data">No data found</div>
+            )}
+
+{isModalOpen && selectedFolder && (
+                <TaskPopup
+                    taskId={Date.now().toString()}
+                    onClose={closeModal}
+                 
+                />
             )}
         </div>
     );

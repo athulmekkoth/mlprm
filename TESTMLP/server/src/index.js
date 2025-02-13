@@ -1,11 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
-
+import cors from "cors"
+import TaskRouter from "./Routes/TaskRoute.js";
 const app = express();
 const PORT = 8000;
 app.use(express.json());
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
+
+
+app.use("/task",TaskRouter)
 const connectDb = async () => {
     try {
         await mongoose.connect("mongodb://localhost:27017/mydatabase")

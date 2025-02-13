@@ -1,10 +1,10 @@
-import Task from "../db/TaskSchema";
+import Task from "../db/TaskSchema.js";
 
 
 export const addTask = async (req, res) => {
   try {
     const { taskId, title, description, time, subTasks } = req.body;
-
+console.log(taskId,title)
     // Create a new task
     const newTask = new Task({
       taskId,
@@ -36,7 +36,7 @@ export const getTask = async (req, res) => {
     const { taskId } = req.params;
 
     // Find task by taskId
-    const task = await Task.findOne({ taskId });
+    const task = await Task.find();
 
     if (!task) {
       return res.status(404).json({
