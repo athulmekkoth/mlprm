@@ -1,4 +1,5 @@
 import Task from "../db/TaskSchema.js";
+import { socketIo } from "../index.js";
 
 
 export const addTask = async (req, res) => {
@@ -16,6 +17,10 @@ console.log(taskId,title)
 
    
     await newTask.save();
+    socketIo.emit("taskAdded", {
+      message: "A new task has been added successfully!",
+
+    });
 
     res.status(201).json({
       success: true,

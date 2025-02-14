@@ -1,63 +1,38 @@
 import express from "express";
-import mongoose from "mongoose";
-import { Server } from "socket.io";
 import http from "http";
-import cors from "cors"
+import { Server } from 'socket.io';
+
 const app = express();
-const PORT = 8000;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-const connectDb = async () => {
-    try {
-        await mongoose.connect("mongodb://localhost:27017/mydatabase");
-        console.log("MongoDB connected successfully");
-    } catch (err) {
-        console.error("MongoDB connection error:", err);
-        process.exit(1);
-    }
-};
-
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+const socketIo = new Server(server); 
+
+app.use(express.json()); 
+
+export { socketIo };
+app.post("/send", (req, res) => {
+    const msg = req.body.message;  
+ 
+    socketIo.emit("pushNotification", { message: msg });  // Use socketIo here, not io
+    res.status(200).send("Message sent");
 });
-app.use(cors("*"))
-io.on("connection", (socket) => {
+
+
+socketIo.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("message", (data) => {
-        console.log("Message received:", data);
-        io.emit("message", data); 
-    });
+ 
+    // socket.on("message", (data) => {
+    //     console.log("Message received:", data);
+    //     socketIo.emit("message", data);  // Broadcast the message to all clients
+    // });
 
+ 
     socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);
     });
 });
 
 
-server.listen(PORT, async () => {
-    await connectDb();
-    console.log(`Server listening at port ${PORT}`);
+server.listen(8000, () => {
+    console.log("Server is running on port 3000");
 });
-
-
-// const wsServer = new WebSocketServer({ server });
-
-// wsServer.on("connection", (ws) => {
-//     console.log("New WebSocket connection established");
-
-//     ws.on("message", (message) => {
-//         console.log(`Received message: ${message}`);
-//         ws.send(`Server received: ${message}`);
-//     });
-
-//     ws.on("close", () => {
-//         console.log("WebSocket connection closed");
-//     });
-// });
