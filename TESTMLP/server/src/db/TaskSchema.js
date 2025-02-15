@@ -35,10 +35,14 @@ const TaskSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: Date,
+    type: String,
     required: true,
   },
-  subTasks: [SubTaskSchema], 
+  date: {
+    type: Date,
+    default: Date.now,
+  }
+  // subTasks: [SubTaskSchema], 
 });
 
 const Task = mongoose.model('Task', TaskSchema);

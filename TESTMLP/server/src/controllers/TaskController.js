@@ -4,15 +4,16 @@ import { socketIo } from "../index.js";
 
 export const addTask = async (req, res) => {
   try {
-    const { taskId, title, description, time, subTasks } = req.body;
-console.log(taskId,title)
+    const { time, taskId, title, description,date} = req.body;
+console.log(time,title,description,date)
     // Create a new task
     const newTask = new Task({
       taskId,
       title,
       description,
       time,
-      subTasks: subTasks || [], 
+      date
+    
     });
 
    
@@ -40,7 +41,7 @@ export const getTask = async (req, res) => {
   try {
     const { taskId } = req.params;
 
-    // Find task by taskId
+  
     const task = await Task.find();
 
     if (!task) {

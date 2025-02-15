@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ChevronRight, ChevronDown } from 'lucide-react';
-
+import io from 'socket.io-client';
 import TaskModal from '../TaskModal/TaskModal';
-
-
-const TaskItem = ({ task }) => {
+import { useNavigate } from 'react-router';
+const socket = io('http://localhost:8000');
+const TaskItem = ({ task, onAddSubtask }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -26,30 +26,36 @@ const TaskItem = ({ task }) => {
                             ))}
                         </div>
                     )}
+                    <button className="add-subtask-button" onClick={() => onAddSubtask(task)}>
+                        Add Subtask
+                    </button>
                 </div>
             )}
         </div>
     );
 };
 
-const Folder = ({ item, onAddTask }) => {
+const Folder = ({ item, onAddTask, isModalOpen, closeModal, selectedTask }) => {
     return (
         <div className="folder">
             <div className="folder-header">
                 <p className="folder-date">{item?.date}</p>
-                <button className="add-task-button" onClick={() => onAddTask(item)}>Add Task</button>
             </div>
             <div className="tasks">
                 {item?.tasks?.map((task, index) => (
-                    <TaskItem key={index} task={task} />
+                    <TaskItem 
+                        key={index} 
+                        task={task} 
+                        onAddSubtask={onAddTask} 
+                    />
                 ))}
             </div>
-            
-{isModalOpen && selectedFolder && (
+
+            {/* Show the modal if it's open and a task is selected */}
+            {isModalOpen && selectedTask && (
                 <TaskModal
-                    taskId={item}
+                    taskId={selectedTask?.taskId} // Pass the selected task to the modal
                     onClose={closeModal}
-                 
                 />
             )}
         </div>
@@ -57,9 +63,22 @@ const Folder = ({ item, onAddTask }) => {
 };
 
 const Data = () => {
+   
+    useEffect(() => {
+        socket.on('taskAdded', (data) => {
+   alert(data.message)
+        });
+    
+        return () => {
+          socket.off('taskAdded');
+        };
+      }, []);
+
+
     const [data, setData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedFolder, setSelectedFolder] = useState(null); 
+    const [selectedTask, setSelectedTask] = useState(null);
+
     const fetchData = async () => {
         try {
             const response = await axios.get(
@@ -75,32 +94,38 @@ const Data = () => {
         fetchData();
     }, []);
 
-    const addTask = (folder) => {
-       
-        setSelectedFolder(folder);
+    const addSubtask = (task) => {
+        setSelectedTask(task);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedFolder(null);
+        setSelectedTask(null);
     };
-
+const navigate  = useNavigate()
     return (
+       <div>
+         <button onClick={()=>navigate("/task")}>Click here to go to all Task</button>
         <div className="folder-container">
             {data && data.length > 0 ? (
                 <div className="folder-structure">
                     {data.map((item, index) => (
-                        <Folder key={index} item={item} onAddTask={addTask} />
+                        <Folder
+                            key={index}
+                            item={item}
+                            onAddTask={addSubtask}
+                            isModalOpen={isModalOpen} 
+                            closeModal={closeModal}    
+                            selectedTask={selectedTask}
+                        />
                     ))}
-
-                    
                 </div>
             ) : (
                 <div className="no-data">No data found</div>
             )}
-
         </div>
+       </div>
     );
 };
 
