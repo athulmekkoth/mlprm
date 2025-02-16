@@ -27,7 +27,7 @@ const TaskItem = ({ task, onAddSubtask }) => {
                         </div>
                     )}
                     <button className="add-subtask-button" onClick={() => onAddSubtask(task)}>
-                        Add Subtask
+                        Add task
                     </button>
                 </div>
             )}
