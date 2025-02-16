@@ -26,14 +26,11 @@ const socketIo = new Server(server, {
   
 const connectToDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/your_database_name', {  // Replace with your MongoDB URI
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect('mongodb://localhost:27017/your_database_name');
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit process if DB connection fails
+    process.exit(1);
   }
 };
 
@@ -42,7 +39,7 @@ const connectToDB = async () => {
 app.post("/send", (req, res) => {
     const msg = req.body.message;  
  
-    socketIo.emit("pushNotification", { message: msg });  // Use socketIo here, not io
+    socketIo.emit("pushNotification", { message: msg });  
     res.status(200).send("Message sent");
 });
 

@@ -72,7 +72,7 @@ const TaskModal = ({ taskId, onClose }) => {
           className="modal-input"
         />
 
-        {/* Task Description */}
+    
         <textarea
           placeholder="Task Description"
           value={description}
@@ -80,7 +80,7 @@ const TaskModal = ({ taskId, onClose }) => {
           className="modal-textarea"
         />
 
-        {/* Task Date */}
+    
         <div className="datetime-picker">
           <label>Task Date</label>
           <input
@@ -91,7 +91,7 @@ const TaskModal = ({ taskId, onClose }) => {
           />
         </div>
 
-        {/* Task Time */}
+   
         <div className="datetime-picker">
           <label>Task Time</label>
           <input
@@ -102,17 +102,7 @@ const TaskModal = ({ taskId, onClose }) => {
           />
         </div>
 
-        {/* Subtasks */}
-        {/* Uncomment if needed */}
-        {/* <input
-          type="text"
-          placeholder="Subtasks (comma separated)"
-          value={subTasks}
-          onChange={handleSubTasksChange}
-          className="modal-input"
-        /> */}
-
-        {/* Buttons for submitting or closing the modal */}
+       
         <div className="modal-actions">
           <button className="submit-button" onClick={handleSubmit}>
             Add Task
