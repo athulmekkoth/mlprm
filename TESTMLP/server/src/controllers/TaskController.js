@@ -1,11 +1,11 @@
 import Task from "../db/TaskSchema.js";
 import { socketIo } from "../index.js";
-import cron from 'node-cron';
+import schedule from "node-schedule";
 export const addTask = async (req, res) => {
   try {
     const { time, taskId, title, description,date} = req.body;
 console.log(time,title,description,date)
-    // Create a new task
+  
     const newTask = new Task({
       taskId,
       title,
@@ -17,15 +17,22 @@ console.log(time,title,description,date)
 
    
    
-    const job = cron.schedule('*/1 * * * *', () => {
-      socketIo.emit("taskAdded", {
-        message: "A new task has been added successfully!",
-      });
-
-    
-      job.stop();  
-    });
-
+   await newTask.save()
+   const dates = new Date();
+   dates.setSeconds(dates.getSeconds() + 10);
+   
+   schedule.scheduleJob(dates, function () {
+     socketIo.emit("taskAdded", {
+       message: "A new task has been added successfully!",
+     });
+   
+     console.log("Task Added event emitted!");
+   });
+  // setTimeout(() => {
+  //   socketIo.emit("taskAdded", {
+  //     message: "A new task has been added successfully!",
+  //   });
+  // }, 1000);
 
     res.status(201).json({
       success: true,
