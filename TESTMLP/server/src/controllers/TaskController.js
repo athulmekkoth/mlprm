@@ -1,7 +1,6 @@
 import Task from "../db/TaskSchema.js";
 import { socketIo } from "../index.js";
-
-
+import cron from 'node-cron';
 export const addTask = async (req, res) => {
   try {
     const { time, taskId, title, description,date} = req.body;
@@ -17,11 +16,16 @@ console.log(time,title,description,date)
     });
 
    
-    await newTask.save();
-    socketIo.emit("taskAdded", {
-      message: "A new task has been added successfully!",
+   
+    const job = cron.schedule('*/1 * * * *', () => {
+      socketIo.emit("taskAdded", {
+        message: "A new task has been added successfully!",
+      });
 
+    
+      job.stop();  
     });
+
 
     res.status(201).json({
       success: true,

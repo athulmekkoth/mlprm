@@ -22,7 +22,7 @@ const TaskItem = ({ task, onAddSubtask }) => {
                     {task?.subtasks && task.subtasks.length > 0 && (
                         <div className="subtasks">
                             {task.subtasks.map((subtask, index) => (
-                                <TaskItem key={index} task={subtask} />
+                                <TaskItem key={index} task={subtask} onAddSubtask={onAddSubtask} />
                             ))}
                         </div>
                     )}
@@ -35,6 +35,8 @@ const TaskItem = ({ task, onAddSubtask }) => {
     );
 };
 
+
+
 const Folder = ({ item, onAddTask, isModalOpen, closeModal, selectedTask }) => {
     return (
         <div className="folder">
@@ -43,18 +45,17 @@ const Folder = ({ item, onAddTask, isModalOpen, closeModal, selectedTask }) => {
             </div>
             <div className="tasks">
                 {item?.tasks?.map((task, index) => (
-                    <TaskItem 
-                        key={index} 
-                        task={task} 
-                        onAddSubtask={onAddTask} 
+                    <TaskItem
+                        key={index}
+                        task={task}
+                        onAddSubtask={onAddTask}
                     />
                 ))}
             </div>
 
-            {/* Show the modal if it's open and a task is selected */}
             {isModalOpen && selectedTask && (
                 <TaskModal
-                    taskId={selectedTask?.taskId} // Pass the selected task to the modal
+                    taskId={selectedTask?.taskId}
                     onClose={closeModal}
                 />
             )}
@@ -63,22 +64,22 @@ const Folder = ({ item, onAddTask, isModalOpen, closeModal, selectedTask }) => {
 };
 
 const Data = () => {
-   
+
     useEffect(() => {
         socket.on('taskAdded', (data) => {
-   alert(data.message)
+            alert(data.message)
         });
-    
+
         return () => {
-          socket.off('taskAdded');
+            socket.off('taskAdded');
         };
-      }, []);
+    }, []);
 
 
     const [data, setData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-
+    const [searchTerm, setSearchTerm] = useState('');
     const fetchData = async () => {
         try {
             const response = await axios.get(
@@ -98,34 +99,53 @@ const Data = () => {
         setSelectedTask(task);
         setIsModalOpen(true);
     };
-
+    const filteredData = data.filter((item) => {
+        return item?.tasks?.some((task) => {
+            return (
+                task?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                task?.description?.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        })
+    })
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedTask(null);
     };
-const navigate  = useNavigate()
+    const navigate = useNavigate()
     return (
-       <div>
-         <button onClick={()=>navigate("/task")}>Click here to go to all Task</button>
-        <div className="folder-container">
-            {data && data.length > 0 ? (
-                <div className="folder-structure">
-                    {data.map((item, index) => (
-                        <Folder
-                            key={index}
-                            item={item}
-                            onAddTask={addSubtask}
-                            isModalOpen={isModalOpen} 
-                            closeModal={closeModal}    
-                            selectedTask={selectedTask}
-                        />
-                    ))}
+        <div>
+
+            <div className='main_head'>
+                <button className="btn_style" onClick={() => navigate("/task")}>Click here to go to all Task</button>
+                <div className="search-container">
+                    <input
+                        type="text"
+                        className="search-bar"
+                        placeholder="Search tasks..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
-            ) : (
-                <div className="no-data">No data found</div>
-            )}
+            </div>
+            <div className="folder-container">
+                {filteredData && filteredData.length > 0 ? (
+                    <div className="folder-structure">
+                        {filteredData.map((item, index) => (
+                            <Folder
+                                key={index}
+                                item={item}
+                                onAddTask={addSubtask}
+                                isModalOpen={isModalOpen}
+                                closeModal={closeModal}
+                                selectedTask={selectedTask}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="no-data">No data found</div>
+                )}
+            </div>
         </div>
-       </div>
     );
 };
 
