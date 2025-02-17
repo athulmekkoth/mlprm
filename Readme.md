@@ -19,5 +19,9 @@
 - **MongoDB** 
 
 ## For running Frontend
-*** cd client
-*** npm run start
+* cd client *
+ * npm run start *
+
+## For running Backend
+* cd server *
+ * npm run dev *
