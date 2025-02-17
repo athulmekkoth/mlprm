@@ -18,3 +18,6 @@
 - **WebSocket** 
 - **MongoDB** 
 
+## For running Frontend
+*** cd client
+*** npm run start
