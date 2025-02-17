@@ -93,21 +93,20 @@
 
 
 
-/* Overlay for the modal */
+
 .task-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure modal appears on top of other content */
+  z-index: 1000; 
 }
 
-/* Content inside the modal */
 .modal-content {
   background-color: white;
   padding: 30px;
@@ -119,7 +118,7 @@
   gap: 15px;
 }
 
-/* Header */
+
 .modal-content h3 {
   font-size: 24px;
   font-weight: 600;
@@ -127,7 +126,7 @@
   text-align: center;
 }
 
-/* Input Fields */
+
 .modal-input,
 .modal-textarea {
   padding: 12px;
@@ -137,13 +136,13 @@
   width: 100%;
 }
 
-/* Textarea specific styles */
+
 .modal-textarea {
   resize: vertical;
   height: 100px;
 }
 
-/* Error message styling */
+
 .error-message {
   color: #ff4d4d;
   background-color: #ffe6e6;
@@ -206,7 +205,7 @@
   border-radius: 8px;
 }
 
-/* Table Styles */
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -233,7 +232,6 @@ td {
   color: #333;
 }
 
-/* Loading and Error States */
 .loading, .error {
   text-align: center;
   font-size: 18px;
